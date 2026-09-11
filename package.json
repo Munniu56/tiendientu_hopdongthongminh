@@ -1,0 +1,7 @@
+{
+    "name": "tiendientu",
+    "version": "1.0.0",
+    "scripts": {
+        "remix": "npx -y @remix-project/remixd -s . --remix-ide https://app.remix.live"
+    }
+}

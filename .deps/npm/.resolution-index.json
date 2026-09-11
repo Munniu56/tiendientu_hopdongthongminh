@@ -1,0 +1,18 @@
+{
+  "contracts/01_Basics/StudentRegistry.sol": {
+    "__sources__": {
+      "contracts/01_Basics/StudentRegistry.sol": {
+        "content": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.26;\r\n\r\n/// @title Hợp đồng Quản lý Sinh viên\r\n/// @notice Cho phép thêm sinh viên và truy xuất thông tin theo ID\r\ncontract StudentRegistry {\r\n    // Định nghĩa cấu trúc dữ liệu Sinh viên\r\n    struct Student {\r\n        string name;\r\n        uint8 age;\r\n        bool isEnrolled;\r\n    }\r\n\r\n    // Biến lưu trữ chủ sở hữu hợp đồng\r\n    address public immutable i_owner;\r\n\r\n    // Mapping từ Mã sinh viên (ID) sang Thông tin sinh viên\r\n    mapping(uint256 => Student) private s_students;\r\n\r\n    // Tổng số sinh viên đã đăng ký\r\n    uint256 public s_totalStudents;\r\n\r\n    // Sự kiện phát ra khi thêm sinh viên mới\r\n    event StudentAdded(uint256 indexed studentId, string name, uint8 age);\r\n\r\n    // Custom Error kiểm tra quyền quản trị\r\n    error Unauthorized();\r\n    error StudentAlreadyExists(uint256 studentId);\r\n\r\n    modifier onlyOwner() {\r\n        if (msg.sender != i_owner) revert Unauthorized();\r\n        _;\r\n    }\r\n\r\n    constructor() {\r\n        i_owner = msg.sender;\r\n    }\r\n\r\n    /// @notice Hàm thêm sinh viên mới vào hệ thống\r\n    /// @param _id Mã số sinh viên\r\n    /// @param _name Tên sinh viên\r\n    /// @param _age Tuổi sinh viên\r\n    function addStudent(\r\n        uint256 _id,\r\n        string calldata _name,\r\n        uint8 _age\r\n    ) external onlyOwner {\r\n        if (s_students[_id].isEnrolled) revert StudentAlreadyExists(_id);\r\n\r\n        s_students[_id] = Student({\r\n            name: _name,\r\n            age: _age,\r\n            isEnrolled: true\r\n        });\r\n\r\n        s_totalStudents++;\r\n\r\n        emit StudentAdded(_id, _name, _age);\r\n    }\r\n\r\n    /// @notice Hàm lấy thông tin sinh viên theo ID\r\n    function getStudent(uint256 _id)\r\n        external\r\n        view\r\n        returns (string memory name, uint8 age, bool isEnrolled)\r\n    {\r\n        Student memory student = s_students[_id];\r\n        return (student.name, student.age, student.isEnrolled);\r\n    }\r\n}",
+        "file": "contracts/01_Basics/StudentRegistry.sol"
+      }
+    }
+  },
+  "contracts/01_Basics/00_HelloWorld.sol": {
+    "__sources__": {
+      "contracts/01_Basics/00_HelloWorld.sol": {
+        "content": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.26;\r\n\r\n/// @title Hello World Smart Contract\r\n/// @author Dr. Long Ha\r\ncontract HelloWorld {\r\n    string private s_greeting;\r\n    uint256 public s_updateCount;\r\n\r\n    event GreetingChanged(\r\n        address indexed updater,\r\n        string oldGreeting,\r\n        string newGreeting,\r\n        uint256 timestamp\r\n    );\r\n\r\n    constructor(string memory _initialGreeting) {\r\n        s_greeting = _initialGreeting;\r\n        s_updateCount = 0;\r\n    }\r\n\r\n    function setGreeting(string calldata _newGreeting) external {\r\n        string memory oldGreeting = s_greeting;\r\n        s_greeting = _newGreeting;\r\n        unchecked {\r\n            ++s_updateCount;\r\n        }\r\n        emit GreetingChanged(msg.sender, oldGreeting, _newGreeting, block.timestamp);\r\n    }\r\n\r\n    function getGreeting() external view returns (string memory) {\r\n        return s_greeting;\r\n    }\r\n}",
+        "file": "contracts/01_Basics/00_HelloWorld.sol"
+      }
+    }
+  }
+}
