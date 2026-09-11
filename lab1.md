@@ -18,7 +18,7 @@
 - **Repository Link:** https://github.com/Munniu56/tiendientu_hopdongthongminh.git
 - **Các tệp đặc tả đã hoàn thành:**
   - `AGENTS.md` (Quy ước mã nguồn)
-  - `SPEC.md` (Đặc tả bài tập 00_HelloWorld)
+  - `SPEC.md` (Đặc tả)
   - `AI_JOURNAL.md` (Nhật ký làm việc với AI)
   - `contracts/01_Basics/00_HelloWorld.sol` (Mã nguồn Smart Contract)
 
