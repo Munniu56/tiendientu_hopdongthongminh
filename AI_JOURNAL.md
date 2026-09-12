@@ -13,8 +13,8 @@
 ## Nhật ký Lab 4 — So sánh Đọc thủ công vs AI
 
 **1. Đọc thủ công tìm ra gì:**
-- Đọc thủ công phát hiện Hợp đồng B có hàm `mint` ở dòng 14 và 15 kèm điều kiện `onlyOwner`.
-- Đọc thủ công phát hiện Hợp đồng C có cấu trúc `isBlacklisted` tại hàm `setBlacklist` (dòng 15 và 16) và logic chặn giao dịch trong `_update` (dòng 19 - 21).
+- Đọc thủ công phát hiện Hợp đồng B có hàm `mint` ở dòng 13 và 14 kèm điều kiện `onlyOwner`.
+- Đọc thủ công phát hiện Hợp đồng C có cấu trúc `isBlacklisted` tại hàm `setBlacklist` (dòng 15 và 16) và logic chặn giao dịch trong `_update` (dòng 19 - 22).
 
 **2. AI tìm thêm được gì:**
 - AI liệt kê chính xác 100% vị trí số dòng mã nguồn của các hàm độc hại trên cả 2 hợp đồng.
