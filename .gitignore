@@ -1,0 +1,3 @@
+# Bỏ qua tệp chứa khóa bí mật
+.env
+*.env
