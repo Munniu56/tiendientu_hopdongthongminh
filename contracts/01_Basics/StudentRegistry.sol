@@ -1,70 +1,91 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.26;
+pragma solidity ^0.8.20;
 
-/// @title Hợp đồng Quản lý Sinh viên
-/// @notice Cho phép thêm sinh viên và truy xuất thông tin theo ID
+/// @title Hop dong quan ly thong tin sinh vien (Student Registry)
+/// @notice Cho phep them moi va tra cuu thong tin sinh vien, toi uu hoa gas
 contract StudentRegistry {
-    // Định nghĩa cấu trúc dữ liệu Sinh viên
+    // Dinh nghia cau truc du lieu Student
+    // Su dung bytes32 thay vi string giup toi uu hoa gas vi chi chiem dung 1 storage slot
     struct Student {
-        string name;
-        uint8 age;
-        bool isEnrolled;
+        uint256 id;
+        bytes32 name;
+        address wallet;
+        bool isActive;
     }
 
-    // Biến lưu trữ chủ sở hữu hợp đồng
-    address public immutable i_owner;
+    // Mapping tra cuu thong tin sinh vien theo dia chi vi
+    mapping(address => Student) public students;
 
-    // Mapping từ Mã sinh viên (ID) sang Thông tin sinh viên
-    mapping(uint256 => Student) private s_students;
+    // Mang luu danh sach dia chi vi de dem tong so sinh vien
+    address[] public studentList;
 
-    // Tổng số sinh viên đã đăng ký
-    uint256 public s_totalStudents;
+    // Custom errors giup toi uu gas khi xay ra loi
+    error InvalidAddress();
+    error StudentAlreadyExists(address wallet);
+    error StudentNotFound(address wallet);
 
-    // Sự kiện phát ra khi thêm sinh viên mới
-    event StudentAdded(uint256 indexed studentId, string name, uint8 age);
+    // Su kien duoc phat ra khi them sinh vien moi thanh cong
+    event StudentAdded(uint256 indexed id, bytes32 indexed name, address indexed wallet);
 
-    // Custom Error kiểm tra quyền quản trị
-    error Unauthorized();
-    error StudentAlreadyExists(uint256 studentId);
-
-    modifier onlyOwner() {
-        if (msg.sender != i_owner) revert Unauthorized();
-        _;
-    }
-
-    constructor() {
-        i_owner = msg.sender;
-    }
-
-    /// @notice Hàm thêm sinh viên mới vào hệ thống
-    /// @param _id Mã số sinh viên
-    /// @param _name Tên sinh viên
-    /// @param _age Tuổi sinh viên
+    /// @notice Ham them sinh vien moi vao he thong
+    /// @dev Ap dung mau thiet ke Checks-Effects-Interactions
+    /// @param _id Ma so dinh danh cua sinh vien
+    /// @param _name Ten sinh vien duoi dang bytes32
+    /// @param _wallet Dia chi vi cua sinh vien
     function addStudent(
         uint256 _id,
-        string calldata _name,
-        uint8 _age
-    ) external onlyOwner {
-        if (s_students[_id].isEnrolled) revert StudentAlreadyExists(_id);
+        bytes32 _name,
+        address _wallet
+    ) external {
+        // 1. Checks: Kiem tra tinh hop le cua du lieu dau vao
+        if (_wallet == address(0)) {
+            revert InvalidAddress();
+        }
+        if (students[_wallet].isActive) {
+            revert StudentAlreadyExists(_wallet);
+        }
 
-        s_students[_id] = Student({
+        // 2. Effects: Thay doi trang thai luu tru tren blockchain
+        students[_wallet] = Student({
+            id: _id,
             name: _name,
-            age: _age,
-            isEnrolled: true
+            wallet: _wallet,
+            isActive: true
         });
 
-        s_totalStudents++;
+        studentList.push(_wallet);
 
-        emit StudentAdded(_id, _name, _age);
+        // 3. Interactions: Phat sinh event ghi log sau khi thay doi state
+        emit StudentAdded(_id, _name, _wallet);
     }
 
-    /// @notice Hàm lấy thông tin sinh viên theo ID
-    function getStudent(uint256 _id)
+    /// @notice Ham tra cuu thong tin chi tiet cua sinh vien theo dia chi vi
+    /// @param _wallet Dia chi vi cua sinh vien can tra cuu
+    /// @return id Ma so sinh vien
+    /// @return name Ten sinh vien (bytes32)
+    /// @return wallet Dia chi vi
+    /// @return isActive Trang thai hoat dong
+    function getStudent(address _wallet)
         external
         view
-        returns (string memory name, uint8 age, bool isEnrolled)
+        returns (
+            uint256 id,
+            bytes32 name,
+            address wallet,
+            bool isActive
+        )
     {
-        Student memory student = s_students[_id];
-        return (student.name, student.age, student.isEnrolled);
+        Student memory student = students[_wallet];
+        if (!student.isActive) {
+            revert StudentNotFound(_wallet);
+        }
+
+        return (student.id, student.name, student.wallet, student.isActive);
+    }
+
+    /// @notice Ham lay tong so luong sinh vien da dang ky
+    /// @return So luong sinh vien trong danh sach
+    function getStudentCount() external view returns (uint256) {
+        return studentList.length;
     }
 }

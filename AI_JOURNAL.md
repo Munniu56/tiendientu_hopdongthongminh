@@ -1,12 +1,16 @@
-# NHẬT KÝ LÀM VIỆC VỚI AI - [Tên bài tập của bạn]
+# NHẬT KÝ LÀM VIỆC VỚI AI – [Tên bài Lab]
 
 ## Lần 1
-**Prompt:** [Dán nguyên văn câu hỏi bạn vừa gửi cho AI]
-**AI trả về:** [Tóm tắt ngắn gọn câu trả lời hoặc code AI tạo ra]
-**Đánh giá:** [Đạt / Lưu ý / Không đạt]
-**Chỗ sai:** [Mô tả chi tiết chỗ sai nếu có]
-**Cách sửa:** [Bạn đã sửa như thế nào]
-**Ai phát hiện:** [Sinh viên phát hiện / AI tự nhận]
+**Prompt:** [Dán nguyên văn câu lệnh bạn đã gửi cho AI]
+**AI trả về:** [Tóm tắt ngắn gọn đoạn mã hoặc câu trả lời AI sinh ra]
+**Đánh giá:** ⚠️ Phải sửa
+**Chỗ sai:** 
+1. AI thiếu kiểm tra phân quyền (chưa có modifier/require)[cite: 12].
+2. AI sử dụng kiểu dữ liệu chưa tối ưu tốn gas (ví dụ: dùng `string` thay vì `bytes32` hoặc dùng `transfer` thay vì `call`)[cite: 10, 12].
+3. AI không phát ra Event khi cập nhật trạng thái (Vi phạm quy ước `AGENTS.md`)[cite: 12].
+**Cách sửa:** 
+- [Chỉ rõ bạn đã sửa dòng mã nào, thêm logic kiểm tra điều kiện gì hoặc yêu cầu AI sửa lại ra sao].
+**Ai phát hiện:** Sinh viên phát hiện
 
 ---
 

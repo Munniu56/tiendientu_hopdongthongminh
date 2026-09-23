@@ -1,29 +1,35 @@
 {
 	"compiler": {
-		"version": "0.8.26+commit.8a97fa7a"
+		"version": "0.8.20+commit.a1b79de6"
 	},
 	"language": "Solidity",
 	"output": {
 		"abi": [
 			{
 				"inputs": [],
-				"stateMutability": "nonpayable",
-				"type": "constructor"
+				"name": "InvalidAddress",
+				"type": "error"
 			},
 			{
 				"inputs": [
 					{
-						"internalType": "uint256",
-						"name": "studentId",
-						"type": "uint256"
+						"internalType": "address",
+						"name": "wallet",
+						"type": "address"
 					}
 				],
 				"name": "StudentAlreadyExists",
 				"type": "error"
 			},
 			{
-				"inputs": [],
-				"name": "Unauthorized",
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "wallet",
+						"type": "address"
+					}
+				],
+				"name": "StudentNotFound",
 				"type": "error"
 			},
 			{
@@ -32,20 +38,20 @@
 					{
 						"indexed": true,
 						"internalType": "uint256",
-						"name": "studentId",
+						"name": "id",
 						"type": "uint256"
 					},
 					{
-						"indexed": false,
-						"internalType": "string",
+						"indexed": true,
+						"internalType": "bytes32",
 						"name": "name",
-						"type": "string"
+						"type": "bytes32"
 					},
 					{
-						"indexed": false,
-						"internalType": "uint8",
-						"name": "age",
-						"type": "uint8"
+						"indexed": true,
+						"internalType": "address",
+						"name": "wallet",
+						"type": "address"
 					}
 				],
 				"name": "StudentAdded",
@@ -59,14 +65,14 @@
 						"type": "uint256"
 					},
 					{
-						"internalType": "string",
+						"internalType": "bytes32",
 						"name": "_name",
-						"type": "string"
+						"type": "bytes32"
 					},
 					{
-						"internalType": "uint8",
-						"name": "_age",
-						"type": "uint8"
+						"internalType": "address",
+						"name": "_wallet",
+						"type": "address"
 					}
 				],
 				"name": "addStudent",
@@ -77,26 +83,31 @@
 			{
 				"inputs": [
 					{
-						"internalType": "uint256",
-						"name": "_id",
-						"type": "uint256"
+						"internalType": "address",
+						"name": "_wallet",
+						"type": "address"
 					}
 				],
 				"name": "getStudent",
 				"outputs": [
 					{
-						"internalType": "string",
-						"name": "name",
-						"type": "string"
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
 					},
 					{
-						"internalType": "uint8",
-						"name": "age",
-						"type": "uint8"
+						"internalType": "bytes32",
+						"name": "name",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "address",
+						"name": "wallet",
+						"type": "address"
 					},
 					{
 						"internalType": "bool",
-						"name": "isEnrolled",
+						"name": "isActive",
 						"type": "bool"
 					}
 				],
@@ -105,7 +116,26 @@
 			},
 			{
 				"inputs": [],
-				"name": "i_owner",
+				"name": "getStudentCount",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "studentList",
 				"outputs": [
 					{
 						"internalType": "address",
@@ -117,13 +147,34 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
-				"name": "s_totalStudents",
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "students",
 				"outputs": [
 					{
 						"internalType": "uint256",
-						"name": "",
+						"name": "id",
 						"type": "uint256"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "name",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "address",
+						"name": "wallet",
+						"type": "address"
+					},
+					{
+						"internalType": "bool",
+						"name": "isActive",
+						"type": "bool"
 					}
 				],
 				"stateMutability": "view",
@@ -133,28 +184,48 @@
 		"devdoc": {
 			"kind": "dev",
 			"methods": {
-				"addStudent(uint256,string,uint8)": {
+				"addStudent(uint256,bytes32,address)": {
+					"details": "Ap dung mau thiet ke Checks-Effects-Interactions",
 					"params": {
-						"_age": "Tuổi sinh viên",
-						"_id": "Mã số sinh viên",
-						"_name": "Tên sinh viên"
+						"_id": "Ma so dinh danh cua sinh vien",
+						"_name": "Ten sinh vien duoi dang bytes32",
+						"_wallet": "Dia chi vi cua sinh vien"
+					}
+				},
+				"getStudent(address)": {
+					"params": {
+						"_wallet": "Dia chi vi cua sinh vien can tra cuu"
+					},
+					"returns": {
+						"id": "Ma so sinh vien",
+						"isActive": "Trang thai hoat dong",
+						"name": "Ten sinh vien (bytes32)",
+						"wallet": "Dia chi vi"
+					}
+				},
+				"getStudentCount()": {
+					"returns": {
+						"_0": "So luong sinh vien trong danh sach"
 					}
 				}
 			},
-			"title": "Hợp đồng Quản lý Sinh viên",
+			"title": "Hop dong quan ly thong tin sinh vien (Student Registry)",
 			"version": 1
 		},
 		"userdoc": {
 			"kind": "user",
 			"methods": {
-				"addStudent(uint256,string,uint8)": {
-					"notice": "Hàm thêm sinh viên mới vào hệ thống"
+				"addStudent(uint256,bytes32,address)": {
+					"notice": "Ham them sinh vien moi vao he thong"
 				},
-				"getStudent(uint256)": {
-					"notice": "Hàm lấy thông tin sinh viên theo ID"
+				"getStudent(address)": {
+					"notice": "Ham tra cuu thong tin chi tiet cua sinh vien theo dia chi vi"
+				},
+				"getStudentCount()": {
+					"notice": "Ham lay tong so luong sinh vien da dang ky"
 				}
 			},
-			"notice": "Cho phép thêm sinh viên và truy xuất thông tin theo ID",
+			"notice": "Cho phep them moi va tra cuu thong tin sinh vien, toi uu hoa gas",
 			"version": 1
 		}
 	},
@@ -162,7 +233,7 @@
 		"compilationTarget": {
 			"contracts/01_Basics/StudentRegistry.sol": "StudentRegistry"
 		},
-		"evmVersion": "cancun",
+		"evmVersion": "shanghai",
 		"libraries": {},
 		"metadata": {
 			"bytecodeHash": "ipfs"
@@ -175,11 +246,11 @@
 	},
 	"sources": {
 		"contracts/01_Basics/StudentRegistry.sol": {
-			"keccak256": "0x667d0880f6f9c45f5f8a7bd837e2233abbd99302fb96a62f94b1de918595fd4c",
+			"keccak256": "0x8790d1220dde5e7644f5378f46e22daf959188423c8289a35510e34a669f3cdf",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://51d88a152d2bf630c35e5087d068773b41739356e05caddc743518fcf8b8f0ee",
-				"dweb:/ipfs/QmfSSyo8cF3ABVQ19x8x2DRYWfRxY9GZpKgmYtMFFbViKW"
+				"bzz-raw://fa57431a3c991855f4d3707d5b1ece0d8379471f84e3472518148b2974aaffa9",
+				"dweb:/ipfs/QmYGeGJMUrLe1aCh4oLG2PFBd1dRH8KdxH8PbhvPPoNVA1"
 			]
 		}
 	},
